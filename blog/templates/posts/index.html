@@ -1,0 +1,61 @@
+{% extends 'app.html' %}
+{% load tz %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+    <h1>Post List</h1>
+    {% for post in posts %}
+        <article>
+            <div class="row">
+                <div class="col-sm-6 col-md-4">
+                    <figure>
+                        <img style="height: 200px" class="img-responsive img-rounded"
+                             src="https://placehold.it/70x70">
+                    </figure>
+                </div>
+                <div class="col-sm-6 col-md-8">
+                    <span class="label label-default pull-right"><i
+                            class="fa fa-comment"></i>{{ post.comment_set.all.count }}</span>
+                    <h4>{{ post.title }}</h4>
+                    <p>{{ post.text }}</p>
+                    <section>
+                        <i class="fa fa-folder-open"></i> {{ post.category.name }}
+                        <i class="fa fa-user"></i> {{ post.user.username }}
+                        <i class="fa fa-calendar"></i>
+                        {% localtime on %}
+                            {{ post.created_date|timesince }} ago
+                        {% endlocaltime %}
+                        <i class="fa fa-eye"></i>10000
+                        <a href="{% url 'posts.show' post.id %}" class="btn btn-primary">Show more</a>
+                    </section>
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+
+    {% if posts.has_other_pages %}
+        <ul class="pagination">
+            {% if posts.has_previous %}
+                <li><a href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in posts.paginator.page_range %}
+                {% if posts.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if posts.has_next %}
+                <li><a href="?page={{ posts.next_page_number }}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+
+{% endblock %}
